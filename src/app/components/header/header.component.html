@@ -1,0 +1,48 @@
+<div class="wrapper">
+  <div class="main-panel" id="main-panel">
+    <div class="container">
+      <div class="nav-bar">
+        <div class="left-part">
+          <button mat-mini-fab id="nav-left-button">
+            <i class="material-icons" style="font-size:18px;">more_vert</i>
+          </button>
+          <h4>Sensate IoT</h4>
+        </div>
+        <div class="right-part">
+          <div class="right-part" id="nav-right">
+            <button mat-icon-button [matMenuTriggerFor]="apps"><i class="material-icons icon-btn">apps</i></button>
+            <mat-menu #apps="matMenu">
+              <button mat-menu-item (click)="navigate('dashboard')">Dashboard</button>
+              <button mat-menu-item (click)="navigate('home')">Homepage</button>
+              <button mat-menu-item (click)="navigate('datawhere')">DataWhere</button>
+            </mat-menu>
+
+            <button mat-icon-button [matMenuTriggerFor]="menu"><i class="material-icons icon-btn">person</i></button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="navigate('profile')">Profile</button>
+              <button mat-menu-item (click)="logout()">Logout</button>
+              <button mat-menu-item (click)="revokeAll()">Logout everywhere</button>
+            </mat-menu>
+          </div>
+        </div>
+        <div id="menu">
+          <button mat-icon-button (click)="snav.toggle()"><i class="material-icons">menu</i></button>
+        </div>
+      </div>
+    </div>
+
+    <mat-sidenav-container>
+      <mat-sidenav #snav [mode]="'over'">
+        <mat-nav-list>
+          <a mat-list-item (click)="navigate('dashboard')">Dashboard</a>
+          <a mat-list-item (click)="navigate('home')">Homepage</a>
+          <a mat-list-item (click)="revokeAll()">Logout everywhere</a>
+          <a mat-list-item (click)="logout()">Logout</a>
+        </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>
