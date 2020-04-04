@@ -26,6 +26,7 @@
       true,
       "element",
       "app",
+      "map",
       "kebab-case"
     ],
     "eofline": true,
@@ -57,7 +58,6 @@
     ],
     "no-console": [
       true,
-      "debug",
       "info",
       "time",
       "timeEnd",
