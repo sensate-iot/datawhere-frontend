@@ -23,7 +23,7 @@ export class LoginService {
       observe: 'response',
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     };
-    this.host = window.location.hostname.replace(/^[^.]+\./g, '');
+    this.host = window.location.hostname;
   }
 
   private static AuthCookie = 'SensateIoTAuth';
@@ -140,5 +140,15 @@ export class LoginService {
     localStorage.removeItem('syskey');
     console.debug(`Removing cookie!`);
     this.cookies.delete(LoginService.AuthCookie, '/', this.host);
+  }
+
+  public getJwtToken() : string {
+    const jwt = this.getJwt();
+
+    if(jwt) {
+      return jwt.jwtToken;
+    }
+
+    return null;
   }
 }

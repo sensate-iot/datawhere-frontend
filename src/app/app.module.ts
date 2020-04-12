@@ -16,7 +16,9 @@ import {ApiKeyService} from './services/api-key.service';
 import {LoginService} from './services/login.service';
 import {MatButtonModule} from '@angular/material/button';
 import {AppsService} from './services/apps.service';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {APP_BASE_HREF} from '@angular/common';
+import {RefreshTokenInterceptorService} from './services/refreshtokeninterceptor.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,13 @@ import {HttpClientModule} from '@angular/common/http';
   providers: [
     ApiKeyService,
     LoginService,
-    AppsService
+    AppsService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RefreshTokenInterceptorService,
+      multi: true
+    },
+    {provide: APP_BASE_HREF, useValue: '/apps/datawhere'}
   ],
   bootstrap: [AppComponent]
 })

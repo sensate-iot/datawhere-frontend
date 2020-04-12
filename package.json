@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --aot=false --disableHostCheck=true",
-    "build-dev": "ng build",
-    "build-staging": "ng build --configuration=staging",
-    "build-prod": "ng build --configuration=production"
+    "start": "ng serve --aot=false --disableHostCheck=true --base-href /apps/datawhere/ --port 4300",
+    "build-dev": "ng build --base-href /apps/datawhere/",
+    "build-staging": "ng build --configuration=staging --base-href /apps/datawhere/",
+    "build-prod": "ng build --configuration=production --base-href /apps/datawhere/"
   },
   "private": true,
   "dependencies": {

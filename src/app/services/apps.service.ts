@@ -6,24 +6,44 @@
  */
 
 import { Injectable } from '@angular/core';
+import {environment} from '../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+
+export interface Application {
+  id: number;
+  name: string;
+  hostname: string;
+  path: string;
+  protocol: string;
+}
+
+export interface MenuEntry {
+  ranking: number;
+  displayName: string;
+  app: Application;
+}
 
 @Injectable()
 export class AppsService {
-  private map: Map<string, string>;
-
-  public constructor() {
-    this.map = new Map<string, string>();
-
-    this.map.set('dashboard', 'http://dashboard.dev.sensateiot.com:4200');
-    this.map.set('login', 'http://login.dev.sensateiot.com');
-    this.map.set('datawhere', 'http://datawhere.dev.sensateiot.com');
+  public constructor(private readonly http: HttpClient) {
   }
 
-  public forward(app: string, path = '') {
-    if (!this.map.has(app)) {
-      return;
-    }
+  public all() {
+    return this.http.get<MenuEntry[]>(`${environment.appsApiHost}/menus`);
+  }
 
-    window.location.href = `${this.map.get(app)}${path}`;
+  public forward(app: string, customPath = '') {
+    this.http.get<Application>(`${environment.appsApiHost}/applications?name=${app}`).subscribe((app) => {
+      let path = `${app.protocol}://${app.hostname}`;
+
+      if(customPath !== '') {
+        path = `${path}${customPath}`;
+      } else {
+        path = `${path}${app.path}`
+      }
+
+      console.log(path);
+      window.location.href = path;
+    });
   }
 }

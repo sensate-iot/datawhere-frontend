@@ -32,7 +32,7 @@ export class MapComponent implements OnInit {
       icon: icon({
         iconSize: [ 25, 41 ],
         iconAnchor: [ 13, 41 ],
-        iconUrl: 'marker-icon.png',
+        iconUrl: 'assets/marker-icon.png',
         shadowUrl: ''
       })
     }).addTo(map)
@@ -41,7 +41,7 @@ export class MapComponent implements OnInit {
       icon: icon({
         iconSize: [ 25, 41 ],
         iconAnchor: [ 13, 41 ],
-        iconUrl: 'marker-icon.png',
+        iconUrl: 'assets/marker-icon.png',
         shadowUrl: ''
       })
     }).addTo(map)
