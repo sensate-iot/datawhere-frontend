@@ -6,7 +6,7 @@
     "start": "ng serve --aot=false --disableHostCheck=true --base-href /apps/datawhere/ --port 4300",
     "build-dev": "ng build --base-href /apps/datawhere/",
     "build-staging": "ng build --configuration=staging --base-href /apps/datawhere/",
-    "build-prod": "ng build --configuration=production --base-href /apps/datawhere/",
+    "build": "ng build --configuration=production --base-href /apps/datawhere/",
     "postinstall": "ngcc --tsconfig ./src/tsconfig.app.json"
   },
   "private": true,
