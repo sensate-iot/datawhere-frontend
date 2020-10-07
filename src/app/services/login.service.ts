@@ -8,15 +8,21 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Jwt} from '../models/jwt.model';
+import {Jwt, TokenReply} from '../models/jwt.model';
 import {CookieService} from 'ngx-cookie-service';
 import {ApiKeyService} from './api-key.service';
+import {Observable} from 'rxjs';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  public constructor(private readonly http: HttpClient,
+  private readonly host: string;
+  private readonly options: any;
+  private static AuthCookie = 'SensateIoTAuth';
+
+  public constructor(private http : HttpClient,
                      private readonly cookies: CookieService,
                      private readonly keys: ApiKeyService) {
     this.options = {
@@ -26,14 +32,22 @@ export class LoginService {
     this.host = window.location.hostname;
   }
 
-  private static AuthCookie = 'SensateIoTAuth';
-  private readonly host: string;
-  private readonly options: any;
+  public getUserId() {
+    const jwt = this.getJwtToken();
+
+    if(jwt === null) {
+      return null;
+    }
+
+    const json = atob(this.getJwtToken().split('.')[1]);
+    const obj = JSON.parse(json);
+    return obj.sub;
+  }
 
   public readAuthCookie() {
     const data = this.cookies.get(LoginService.AuthCookie);
 
-    if (data === null || data.length <= 0) {
+    if(data === null || data.length <= 0) {
       return null;
     }
 
@@ -46,10 +60,10 @@ export class LoginService {
     return jwt;
   }
 
-  public isLoggedIn(): boolean {
-    const jwt = this.readAuthCookie();
+  public isLoggedIn() : boolean {
+    let jwt = this.readAuthCookie();
 
-    if (jwt === null || jwt === undefined) {
+    if(jwt === null || jwt === undefined) {
       return false;
     }
 
@@ -59,7 +73,7 @@ export class LoginService {
   public revokeAllTokens() {
     const jwt = this.getJwt();
 
-    if (jwt == null || jwt.refreshToken == null) {
+    if(jwt == null || jwt.refreshToken == null) {
       this.resetLogin();
       return;
     }
@@ -73,7 +87,7 @@ export class LoginService {
         this.resetLogin();
         resolve();
       }, () => {
-        console.debug('Unable to revoke all tokens!');
+        console.debug("Unable to revoke all tokens!");
         this.resetLogin();
         reject();
       });
@@ -84,14 +98,14 @@ export class LoginService {
     return new Promise<void>(resolve => {
       const jwt = this.getJwt();
 
-      if (jwt == null || jwt.refreshToken == null) {
+      if(jwt == null || jwt.refreshToken == null) {
         this.resetLogin();
         return;
       }
 
       const key = localStorage.getItem('syskey');
 
-      if (key != null) {
+      if(key != null) {
         this.keys.revokeByKey(key).subscribe(() => {
           console.debug('System API key revoked!');
         });
@@ -110,18 +124,51 @@ export class LoginService {
     });
   }
 
-  public getJwt(): Jwt {
-    const data = localStorage.getItem('jwt');
-    if (!data) {
-      return null;
+  public refresh() : Observable<TokenReply> {
+    const jwt = this.getJwt();
+
+    if(jwt == null)
+      return;
+
+    const data = {
+      "Email" : jwt.email,
+      "RefreshToken": jwt.refreshToken
+    };
+
+    return this.http.post<TokenReply>(environment.authApiHost + '/tokens/refresh', data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json').set('Cache-Control', 'none')
+    });
+  }
+
+  public updateJwt(refresh : string, token : string, expiry : number) {
+    const jwt = this.getJwt();
+
+    jwt.refreshToken = refresh;
+    jwt.jwtToken = token;
+    jwt.expiresInMinutes = expiry;
+    this.setSession(jwt);
+  }
+
+  public getJwtToken() : string {
+    const jwt = this.getJwt();
+
+    if(jwt) {
+      return jwt.jwtToken;
     }
 
-    return JSON.parse(data, (key, value) => {
-      if (value !== '') {
-        return value;
-      }
+    return null;
+  }
 
-      const result = new Jwt();
+  public getJwt() : Jwt {
+    const data = localStorage.getItem('jwt');
+    if(!data)
+      return null;
+
+    return JSON.parse(data, function (key, value) {
+      if(value !== '')
+        return value;
+
+      let result = new Jwt();
       result.expiresInMinutes = value.expiresInMinutes;
       result.jwtExpiresInMinutes = value.jwtExpiresInMinutes;
       result.jwtToken = value.jwtToken;
@@ -142,13 +189,22 @@ export class LoginService {
     this.cookies.delete(LoginService.AuthCookie, '/', this.host);
   }
 
-  public getJwtToken() : string {
-    const jwt = this.getJwt();
-
-    if(jwt) {
-      return jwt.jwtToken;
+  public getSysKey() {
+    if(!this.isLoggedIn()) {
+      return null;
     }
 
-    return null;
+    return localStorage.getItem('syskey');
+  }
+
+  public setSession(data : Jwt) {
+    const now = moment().add(data.expiresInMinutes, 'minutes').toDate();
+
+    localStorage.setItem('jwt', JSON.stringify(data));
+    localStorage.setItem('syskey', data.systemApiKey);
+
+    const cookie = btoa(JSON.stringify(data));
+    console.debug(`Setting cookie for: ${this.host}`);
+    this.cookies.set(LoginService.AuthCookie, cookie, now, '/', this.host);
   }
 }

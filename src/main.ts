@@ -4,9 +4,16 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-if (environment.production) {
-  enableProdMode();
+async function main() {
+  if(environment.production) {
+    enableProdMode();
+    console.debug = function () { }
+  }
+
+  console.debug(`Path name : ${window.location.pathname}`);
+
+  platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.error(err));
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+main().then(() => {});

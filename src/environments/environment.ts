@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  appId: 'datawhere',
   authApiHost: 'http://localhost:5000/auth/v1',
   appsApiHost: 'http://applications.api.dev.sensateiot.com/apps/v1'
 };

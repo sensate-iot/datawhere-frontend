@@ -13,3 +13,11 @@ export class Jwt {
   email: string;
   systemApiKey: string;
 }
+
+export class TokenReply {
+  refreshToken : string;
+  jwtToken : string;
+  expiresInMinutes : number;
+  jwtExpiresInMinutes : number;
+}
+
