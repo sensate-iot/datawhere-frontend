@@ -5,7 +5,6 @@
  * @email  dev@bietje.net
  */
 
-import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Jwt, TokenReply} from '../models/jwt.model';
@@ -13,10 +12,9 @@ import {CookieService} from 'ngx-cookie-service';
 import {ApiKeyService} from './api-key.service';
 import {Observable} from 'rxjs';
 import * as moment from 'moment';
+import {Injectable} from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LoginService {
   private readonly host: string;
   private readonly options: any;
@@ -81,7 +79,7 @@ export class LoginService {
 
     this.keys.revokeAll(true).subscribe(() => {});
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.http.delete(environment.authApiHost + '/tokens/revoke-all', {
         headers: new HttpHeaders().set('Content-Type', 'application/json').set('Cache-Control', 'no-cache')
       }).subscribe(() => {

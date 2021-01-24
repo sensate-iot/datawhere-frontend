@@ -11,6 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "/apps/datawhere/",
             "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
@@ -114,7 +115,7 @@
               "src/favicon.ico"
             ]
           }
-        },
+        }
       }
     },
     "sensate-data-map-e2e": {
@@ -128,7 +129,7 @@
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "sensate-data-map:serve"
           }
-        },
+        }
       }
     }
   },

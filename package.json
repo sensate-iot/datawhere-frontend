@@ -3,10 +3,10 @@
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --aot=false --disableHostCheck=true --base-href /apps/datawhere/ --port 4300",
-    "build-dev": "ng build --base-href /apps/datawhere/",
-    "build-staging": "ng build --configuration=staging --base-href /apps/datawhere/",
-    "build": "ng build --aot --configuration=production --base-href /apps/datawhere/",
+    "start": "ng serve --disableHostCheck=true --port 4300",
+    "build-dev": "ng build",
+    "build-staging": "ng build --configuration=staging",
+    "build": "ng build --aot --configuration=production",
     "postinstall": "ngcc --tsconfig ./src/tsconfig.app.json"
   },
   "private": true,
